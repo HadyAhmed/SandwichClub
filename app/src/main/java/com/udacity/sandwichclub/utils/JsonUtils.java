@@ -13,27 +13,33 @@ public class JsonUtils {
 
     public static Sandwich parseSandwichJson(String json) {
         try {
-            JSONObject rootJSON = new JSONObject(json);
+            JSONObject rootJSON = new JSONObject(json); // the root json form
             JSONObject nameJSON = rootJSON.getJSONObject("name");
             String mainName = nameJSON.getString("mainName");
-            List<String> alsoKnownAs = new ArrayList<>();
             JSONArray alsoKnownAsArray = nameJSON.getJSONArray("alsoKnownAs");
-            for (int i = 0; i < alsoKnownAsArray.length(); i++) {
-                alsoKnownAs.add(alsoKnownAsArray.getString(i));
-            }
+            List<String> alsoKnownAs = parseStringList(alsoKnownAsArray);
             String placeOfOrigin = rootJSON.getString("placeOfOrigin");
             String description = rootJSON.getString("description");
             String imageURL = rootJSON.getString("image");
-            List<String> ingredients = new ArrayList<>();
-            JSONArray ingredientsArray = rootJSON.getJSONArray("ingredients");
-            for (int i = 0; i < ingredientsArray.length(); i++) {
-                ingredients.add(ingredientsArray.getString(i));
-            }
+            List<String> ingredients = parseStringList(rootJSON.getJSONArray("ingredients"));
 
             return new Sandwich(mainName, alsoKnownAs, placeOfOrigin, description, imageURL, ingredients);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * This method will extract the string in JSONArray Object
+     *
+     * @return Parsed String List.
+     */
+    private static List<String> parseStringList(JSONArray jsonArray) throws JSONException {
+        List<String> stringList = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            stringList.add(jsonArray.getString(i));
+        }
+        return stringList;
     }
 }
